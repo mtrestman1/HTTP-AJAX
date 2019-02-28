@@ -8,11 +8,16 @@ class App extends React.Component {
     super();
     this.state = {
       friends: [],
-      newFriend: ''
+     
+        name: '',
+        age: '',
+        email: ''
+      
     }
   }
 
 componentDidMount() {
+ 
   axios.get('http://localhost:5000/friends').then(response => {
     console.log(response);
     this.setState({friends: response.data})
@@ -23,16 +28,25 @@ componentDidMount() {
 }
 
 handleNameChange = e => {
-  this.setState({newFriend: e.target.value})
+  
+  this.setState({[e.target.name]: e.target.value})
 }
 
-handleNewFriend = () => {
-  const name = {name: this.state.newFriend}
-  axios.post('http://localhost:5000/friends', name)
+handleNewFriend = (e) => {
+ e.preventDefault();
+  const friend = {
+    name: this.state.name,
+    age: this.state.age,
+    email: this.state.email
+  }
+  axios.post('http://localhost:5000/friends', friend)
   .then(response => {
     console.log(response)
   this.setState({ 
-    friends: response.data,
+    friend: response.data,
+    name: '',
+    age: '',
+    email: ''
     
   })
   })
@@ -42,14 +56,35 @@ handleNewFriend = () => {
   render() {
     return (
       <div className="App">
-      <FriendsList friends={this.state.friends}/>
+      
+      <form>
+            <input 
+      type='text' 
+      name='name'
+      placeholder='lonely? add a friend name' 
+      onChange={this.handleNameChange} 
+      value={this.state.name} 
+      />
+      
       <input 
       type='text' 
-      placeholder='lonely? add a friend' 
+      name='age'
+      placeholder='age please' 
       onChange={this.handleNameChange} 
-      value={this.state.friend} 
+      value={this.state.age} 
       />
+      
+      <input 
+      type='text' 
+      name='email'
+      placeholder='email' 
+      onChange={this.handleNameChange} 
+      value={this.state.email} 
+      />
+     </form>
         <button onClick={this.handleNewFriend}>ADD FRIENDZ</button>
+            
+            <FriendsList friends={this.state.friends}/>
         
       </div>
     );
